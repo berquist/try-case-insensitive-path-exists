@@ -1,8 +1,6 @@
 import os
 import sys
 from pathlib import Path
-
-# from pprint import pprint
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 
@@ -54,16 +52,18 @@ def assert_unique_2(parent_path: Path, name: str, name_lower: str) -> bool:
 def path_exists_with_different_case(parent_path: str, name: str) -> bool:
     full_path = os.path.join(parent_path, name)
     if os.path.exists(full_path):
-        items = [os.path.join(parent_path, item) for item in os.listdir(parent_path)]
-        return full_path not in items
+        return full_path not in [
+            os.path.join(parent_path, item) for item in os.listdir(parent_path)
+        ]
     return False
 
 
 def path_exists_with_different_case_pathlib(parent_path: Path, name: str) -> bool:
     full_path = parent_path / name
     if full_path.exists():
-        items = [str(parent_path / item) for item in os.listdir(str(parent_path))]
-        return str(full_path) not in items
+        return str(full_path) not in [
+            str(parent_path / item) for item in os.listdir(str(parent_path))
+        ]
     return False
 
 
@@ -72,31 +72,24 @@ def path_exists_with_different_case_all_filesystems(
 ) -> bool:
     parent_path_lower = parent_path.lower()
     full_path = os.path.join(parent_path, name)
-    full_path_lower = full_path.lower()
     dir_items = list(os.listdir(parent_path))
-    items = [os.path.join(parent_path, item) for item in dir_items]
-    items_lower = [os.path.join(parent_path_lower, item.lower()) for item in dir_items]
-    # print(full_path)
-    # pprint(items)
-    # print(full_path_lower)
-    # pprint(items_lower)
-    return full_path not in items and full_path_lower in items_lower
+    return full_path not in [
+        os.path.join(parent_path, item) for item in dir_items
+    ] and full_path.lower() in [
+        os.path.join(parent_path_lower, item.lower()) for item in dir_items
+    ]
 
 
 def path_exists_with_different_case_all_filesystems_pathlib(
     parent_path: Path, name: str
 ) -> bool:
     parent_path_lower = Path(str(parent_path).lower())
-    full_path = str(parent_path / name)
-    full_path_lower = str(parent_path_lower / name.lower())
     dir_items = list(os.listdir(str(parent_path)))
-    items = [str(parent_path / item) for item in dir_items]
-    items_lower = [str(parent_path_lower / item.lower()) for item in dir_items]
-    # print(full_path)
-    # pprint(items)
-    # print(full_path_lower)
-    # pprint(items_lower)
-    return full_path not in items and full_path_lower in items_lower
+    return str(parent_path / name) not in [
+        str(parent_path / item) for item in dir_items
+    ] and str(parent_path_lower / name.lower()) in [
+        str(parent_path_lower / item.lower()) for item in dir_items
+    ]
 
 
 if __name__ == "__main__":
