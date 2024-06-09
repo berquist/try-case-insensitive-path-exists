@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+from pprint import pprint
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 
@@ -72,11 +73,16 @@ def path_exists_with_different_case_all_filesystems(
 if __name__ == "__main__":
     with TemporaryDirectory() as temp_dir:
         fn_base = Path(temp_dir)
+        assert fn_base.exists()
+        assert fn_base.is_dir()
         stub_upper = "DA662D55CB67136651BD3126D0C87BC4.JPG"
         stub_lower = stub_upper.lower()
         fn_upper = fn_base / stub_upper
         fn_lower = fn_base / stub_lower
         fn_upper.touch(mode=0o644, exist_ok=True)
+        pprint(list(fn_base.iterdir()))
+        assert fn_upper.exists()
+        assert fn_upper.is_file()
 
         platform = sys.platform
         exists = path_exists_with_different_case(fn_base, stub_lower)
@@ -97,3 +103,6 @@ if __name__ == "__main__":
             assert exists_dont_ignore
         else:
             assert not exists_dont_ignore
+        # darwin: false true true
+        # linux: true false true
+        # win32: xxx xxx xxx (debugging, expecting "false true true")
