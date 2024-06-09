@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+from pprint import pprint
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 
@@ -52,7 +53,12 @@ def assert_unique_2(parent_path: Path, name: str, name_lower: str) -> bool:
 def path_exists_with_different_case(parent_path: Path, name: str) -> bool:
     items = list(os.listdir(str(parent_path)))
     items_lower = [item.lower() for item in items]
-    return name not in items and name.lower() in items_lower
+    name_lower = name.lower()
+    pprint(name)
+    pprint(items)
+    pprint(name_lower)
+    pprint(items_lower)
+    return name not in items and name_lower in items_lower
 
 
 if __name__ == "__main__":
@@ -67,7 +73,7 @@ if __name__ == "__main__":
         platform = sys.platform
         exists = path_exists_with_different_case(fn_base, stub_lower)
         print(f"platform: {platform}")
-        if platform in ("win32", "darwin"):
+        if not is_fs_case_sensitive(fn_base):
             assert exists
         else:
             assert not exists
