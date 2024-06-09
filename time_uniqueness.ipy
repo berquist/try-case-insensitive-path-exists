@@ -17,3 +17,19 @@ with TemporaryDirectory() as temp_dir:
     %timeit path_exists_with_different_case(temp_dir, stub_lower)
     %timeit path_exists_with_different_case_all_filesystems_pathlib(fn_base, stub_lower)
     %timeit path_exists_with_different_case_all_filesystems(temp_dir, stub_lower)
+
+# darwin
+# 20.6 μs ± 69 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+# 13.8 μs ± 231 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
+# 22.7 μs ± 114 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+# 10.3 μs ± 210 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
+# linux
+# 11.2 μs ± 35.9 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
+# 3.46 μs ± 55.6 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
+# 44 μs ± 24.5 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+# 12.4 μs ± 185 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
+# win32
+# 83.2 μs ± 780 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+# 43.3 μs ± 784 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+# 63.4 μs ± 71.9 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+# 28.8 μs ± 93.2 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
