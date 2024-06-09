@@ -1,7 +1,8 @@
 import os
 import sys
 from pathlib import Path
-from pprint import pprint
+
+# from pprint import pprint
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 
@@ -50,7 +51,15 @@ def assert_unique_2(parent_path: Path, name: str, name_lower: str) -> bool:
     return False
 
 
-def path_exists_with_different_case(parent_path: Path, name: str) -> bool:
+def path_exists_with_different_case(parent_path: str, name: str) -> bool:
+    full_path = os.path.join(parent_path, name)
+    if os.path.exists(full_path):
+        items = [os.path.join(parent_path, item) for item in os.listdir(parent_path)]
+        return full_path not in items
+    return False
+
+
+def path_exists_with_different_case_pathlib(parent_path: Path, name: str) -> bool:
     full_path = parent_path / name
     if full_path.exists():
         items = [str(parent_path / item) for item in os.listdir(str(parent_path))]
@@ -59,6 +68,22 @@ def path_exists_with_different_case(parent_path: Path, name: str) -> bool:
 
 
 def path_exists_with_different_case_all_filesystems(
+    parent_path: str, name: str
+) -> bool:
+    parent_path_lower = parent_path.lower()
+    full_path = os.path.join(parent_path, name)
+    full_path_lower = full_path.lower()
+    dir_items = list(os.listdir(parent_path))
+    items = [os.path.join(parent_path, item) for item in dir_items]
+    items_lower = [os.path.join(parent_path_lower, item.lower()) for item in dir_items]
+    # print(full_path)
+    # pprint(items)
+    # print(full_path_lower)
+    # pprint(items_lower)
+    return full_path not in items and full_path_lower in items_lower
+
+
+def path_exists_with_different_case_all_filesystems_pathlib(
     parent_path: Path, name: str
 ) -> bool:
     parent_path_lower = Path(str(parent_path).lower())
@@ -67,32 +92,39 @@ def path_exists_with_different_case_all_filesystems(
     dir_items = list(os.listdir(str(parent_path)))
     items = [str(parent_path / item) for item in dir_items]
     items_lower = [str(parent_path_lower / item.lower()) for item in dir_items]
-    print(full_path)
-    pprint(items)
-    print(full_path_lower)
-    pprint(items_lower)
+    # print(full_path)
+    # pprint(items)
+    # print(full_path_lower)
+    # pprint(items_lower)
     return full_path not in items and full_path_lower in items_lower
 
 
 if __name__ == "__main__":
     with TemporaryDirectory() as temp_dir:
         fn_base = Path(temp_dir)
-        assert fn_base.exists()
-        assert fn_base.is_dir()
+        assert os.path.exists(fn_base)
+        assert os.path.isdir(fn_base)
         stub_upper = "DA662D55CB67136651BD3126D0C87BC4.JPG"
         stub_lower = stub_upper.lower()
         fn_upper = fn_base / stub_upper
         fn_lower = fn_base / stub_lower
         fn_upper.touch(mode=0o644, exist_ok=True)
-        assert fn_upper.exists()
-        assert fn_upper.is_file()
+        assert os.path.exists(fn_upper)
+        assert os.path.isfile(fn_upper)
 
         platform = sys.platform
         case_sensitive = is_fs_case_sensitive(fn_base)
-        exists = path_exists_with_different_case(fn_base, stub_lower)
-        exists_dont_ignore = path_exists_with_different_case(fn_base, stub_lower)
+        exists_dont_ignore = path_exists_with_different_case(temp_dir, stub_lower)
         exists_ignore = path_exists_with_different_case_all_filesystems(
-            fn_base, stub_lower
+            temp_dir, stub_lower
+        )
+        assert (
+            path_exists_with_different_case_pathlib(fn_base, stub_lower)
+            == exists_dont_ignore
+        )
+        assert (
+            path_exists_with_different_case_all_filesystems_pathlib(fn_base, stub_lower)
+            == exists_ignore
         )
         print(f"platform: {platform}")
         print(f"is case sensitive fs: {case_sensitive}")
@@ -113,4 +145,4 @@ if __name__ == "__main__":
             assert not exists_dont_ignore
         # darwin: false true true
         # linux: true false true
-        # win32: xxx xxx xxx (debugging, expecting "false true true")
+        # win32: false true true
