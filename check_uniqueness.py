@@ -62,11 +62,11 @@ def path_exists_with_different_case_all_filesystems(
     parent_path: Path, name: str
 ) -> bool:
     parent_path_lower = Path(str(parent_path).lower())
-    full_path = parent_path / name
-    full_path_lower = parent_path_lower / name.lower()
+    full_path = str(parent_path / name)
+    full_path_lower = str(parent_path_lower / name.lower())
     dir_items = list(os.listdir(str(parent_path)))
-    items = [parent_path / item for item in dir_items]
-    items_lower = [parent_path_lower / item.lower() for item in dir_items]
+    items = [str(parent_path / item) for item in dir_items]
+    items_lower = [str(parent_path_lower / item.lower()) for item in dir_items]
     print(full_path)
     pprint(items)
     print(full_path_lower)
@@ -84,7 +84,6 @@ if __name__ == "__main__":
         fn_upper = fn_base / stub_upper
         fn_lower = fn_base / stub_lower
         fn_upper.touch(mode=0o644, exist_ok=True)
-        pprint(list(fn_base.iterdir()))
         assert fn_upper.exists()
         assert fn_upper.is_file()
 
