@@ -67,6 +67,10 @@ def path_exists_with_different_case_all_filesystems(
     dir_items = list(os.listdir(str(parent_path)))
     items = [parent_path / item for item in dir_items]
     items_lower = [parent_path_lower / item.lower() for item in dir_items]
+    print(full_path)
+    pprint(items)
+    print(full_path_lower)
+    pprint(items_lower)
     return full_path not in items and full_path_lower in items_lower
 
 
@@ -85,21 +89,26 @@ if __name__ == "__main__":
         assert fn_upper.is_file()
 
         platform = sys.platform
+        case_sensitive = is_fs_case_sensitive(fn_base)
         exists = path_exists_with_different_case(fn_base, stub_lower)
         exists_dont_ignore = path_exists_with_different_case(fn_base, stub_lower)
         exists_ignore = path_exists_with_different_case_all_filesystems(
             fn_base, stub_lower
         )
         print(f"platform: {platform}")
-        print(f"is case sensitive fs: {is_fs_case_sensitive(fn_base)}")
+        print(f"is case sensitive fs: {case_sensitive}")
         print(
             f"file exists with different case (don't ignore fs case-sensitivity): {exists_dont_ignore}"
         )
         print(
             f"file exists with different case (ignore fs case-sensitivity): {exists_ignore}"
         )
+        if platform in ("darwin", "win32"):
+            assert not case_sensitive
+        else:
+            assert case_sensitive
         assert exists_ignore
-        if not is_fs_case_sensitive(fn_base):
+        if not case_sensitive:
             assert exists_dont_ignore
         else:
             assert not exists_dont_ignore
