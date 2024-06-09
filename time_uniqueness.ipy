@@ -1,0 +1,5 @@
+%run check_uniqueness.py
+%timeit path_exists_with_different_case_pathlib(fn_base, stub_lower)
+%timeit path_exists_with_different_case(temp_dir, stub_lower)
+%timeit path_exists_with_different_case_all_filesystems_pathlib(fn_base, stub_lower)
+%timeit path_exists_with_different_case_all_filesystems(temp_dir, stub_lower)
