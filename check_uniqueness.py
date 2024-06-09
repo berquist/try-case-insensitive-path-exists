@@ -1,7 +1,7 @@
-from pathlib import Path
-from tempfile import NamedTemporaryFile, TemporaryDirectory
 import os
 import sys
+from pathlib import Path
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 
 # %time is_fs_case_sensitive()
@@ -13,7 +13,11 @@ import sys
 def is_fs_case_sensitive(source_dir=None):
     if not hasattr(is_fs_case_sensitive, "case_sensitive"):
         with NamedTemporaryFile(prefix="TmP", dir=source_dir) as tmp_file:
-            setattr(is_fs_case_sensitive, "case_sensitive", not os.path.exists(tmp_file.name.lower()))
+            setattr(
+                is_fs_case_sensitive,
+                "case_sensitive",
+                not os.path.exists(tmp_file.name.lower()),
+            )
     return is_fs_case_sensitive.case_sensitive
 
 
