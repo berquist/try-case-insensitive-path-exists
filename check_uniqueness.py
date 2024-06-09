@@ -3,13 +3,13 @@ import sys
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 
-
 # %time is_fs_case_sensitive()
 # CPU times: user 752 μs, sys: 117 μs, total: 869 μs
 # Wall time: 605 μs
 #
 # %timeit is_fs_case_sensitive()
 # 97.7 ns ± 0.626 ns per loop (mean ± std. dev. of 7 runs, 10,000,000 loops each)
+
 
 # darwin
 # CPU times: user 24 μs, sys: 51 μs, total: 75 μs
@@ -142,7 +142,8 @@ if __name__ == "__main__":
         print(
             f"file exists with different case (ignore fs case-sensitivity): {exists_ignore}"
         )
-        if platform in ("darwin", "win32"):
+        platform_is_case_insensitive = platform in ("darwin", "win32")
+        if platform_is_case_insensitive:
             assert not case_sensitive
         else:
             assert case_sensitive
@@ -154,6 +155,9 @@ if __name__ == "__main__":
         # darwin: false true true
         # linux: true false true
         # win32: false true true
-        assert not is_unique_1(fn_base, stub_lower)
+        if platform_is_case_insensitive:
+            assert not is_unique_1(fn_base, stub_lower)
+        else:
+            assert is_unique_1(fn_base, stub_lower)
         assert not is_unique_2_pathlib(fn_base, stub_lower)
         assert not is_unique_2(temp_dir, stub_lower)
