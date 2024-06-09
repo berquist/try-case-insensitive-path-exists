@@ -44,24 +44,24 @@ def is_unique_1(parent_path: Path, name: str) -> bool:
         name = name.encode("utf-8")
 
     if (parent_path / name).exists():
-        return True
-    return False
+        return False
+    return True
 
 
 def is_unique_2_pathlib(parent_path: Path, name_lower: str) -> bool:
     # os.listdir is much faster here than os.walk or parent_path.iterdir
     for item in os.listdir(str(parent_path)):
         if name_lower == item.lower():
-            return True
-    return False
+            return False
+    return True
 
 
 def is_unique_2(parent_path: str, name_lower: str) -> bool:
     # os.listdir is much faster here than os.walk or parent_path.iterdir
     for item in os.listdir(parent_path):
         if name_lower == item.lower():
-            return True
-    return False
+            return False
+    return True
 
 
 def path_exists_with_different_case(parent_path: str, name: str) -> bool:
@@ -154,7 +154,6 @@ if __name__ == "__main__":
         # darwin: false true true
         # linux: true false true
         # win32: false true true
-        # These should also be platform-independent.
         assert not is_unique_1(fn_base, stub_lower)
         assert not is_unique_2_pathlib(fn_base, stub_lower)
         assert not is_unique_2(temp_dir, stub_lower)
