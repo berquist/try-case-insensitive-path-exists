@@ -1,5 +1,19 @@
+from pathlib import Path
+import os.path
+
 %run check_uniqueness.py
-%timeit path_exists_with_different_case_pathlib(fn_base, stub_lower)
-%timeit path_exists_with_different_case(temp_dir, stub_lower)
-%timeit path_exists_with_different_case_all_filesystems_pathlib(fn_base, stub_lower)
-%timeit path_exists_with_different_case_all_filesystems(temp_dir, stub_lower)
+with TemporaryDirectory() as temp_dir:
+    fn_base = Path(temp_dir)
+    assert os.path.exists(fn_base)
+    assert os.path.isdir(fn_base)
+    stub_upper = "DA662D55CB67136651BD3126D0C87BC4.JPG"
+    stub_lower = stub_upper.lower()
+    fn_upper = fn_base / stub_upper
+    fn_lower = fn_base / stub_lower
+    fn_upper.touch(mode=0o644, exist_ok=True)
+    assert os.path.exists(fn_upper)
+    assert os.path.isfile(fn_upper)
+    %timeit path_exists_with_different_case_pathlib(fn_base, stub_lower)
+    %timeit path_exists_with_different_case(temp_dir, stub_lower)
+    %timeit path_exists_with_different_case_all_filesystems_pathlib(fn_base, stub_lower)
+    %timeit path_exists_with_different_case_all_filesystems(temp_dir, stub_lower)
