@@ -19,10 +19,12 @@ with TemporaryDirectory() as temp_dir:
     %time is_fs_case_sensitive(temp_dir)
     print("is_fs_case_sensitive 2")
     %time is_fs_case_sensitive(temp_dir)
+    # fastest on macOS
     print("is_unique_1")
     %timeit is_unique_1(fn_base, stub_lower)
     print("is_unique_2_pathlib")
     %timeit is_unique_2_pathlib(fn_base, stub_lower)
+    # fastest on Linux and Windows
     print("is_unique_2")
     %timeit is_unique_2(temp_dir, stub_lower)
     print("path_exists_with_different_case_pathlib")
