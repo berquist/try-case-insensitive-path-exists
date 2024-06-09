@@ -13,6 +13,10 @@ with TemporaryDirectory() as temp_dir:
     fn_upper.touch(mode=0o644, exist_ok=True)
     assert os.path.exists(fn_upper)
     assert os.path.isfile(fn_upper)
+    if hasattr(is_fs_case_sensitive, "case_sensitive"):
+        delattr(is_fs_case_sensitive, "case_sensitive")
+    %time is_fs_case_sensitive(temp_dir)
+    %time is_fs_case_sensitive(temp_dir)
     %timeit path_exists_with_different_case_pathlib(fn_base, stub_lower)
     %timeit path_exists_with_different_case(temp_dir, stub_lower)
     %timeit path_exists_with_different_case_all_filesystems_pathlib(fn_base, stub_lower)
