@@ -1,7 +1,6 @@
 import os
 import sys
 from pathlib import Path
-from pprint import pprint
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 
@@ -51,14 +50,23 @@ def assert_unique_2(parent_path: Path, name: str, name_lower: str) -> bool:
 
 
 def path_exists_with_different_case(parent_path: Path, name: str) -> bool:
-    items = list(os.listdir(str(parent_path)))
-    items_lower = [item.lower() for item in items]
-    name_lower = name.lower()
-    pprint(name)
-    pprint(items)
-    pprint(name_lower)
-    pprint(items_lower)
-    return name not in items and name_lower in items_lower
+    full_path = parent_path / name
+    if full_path.exists():
+        items = [parent_path / item for item in os.listdir(str(parent_path))]
+        return full_path not in items
+    return False
+
+
+def path_exists_with_different_case_all_filesystems(
+    parent_path: Path, name: str
+) -> bool:
+    parent_path_lower = Path(str(parent_path).lower())
+    full_path = parent_path / name
+    full_path_lower = parent_path_lower / name.lower()
+    dir_items = list(os.listdir(str(parent_path)))
+    items = [parent_path / item for item in dir_items]
+    items_lower = [parent_path_lower / item.lower() for item in dir_items]
+    return full_path not in items and full_path_lower in items_lower
 
 
 if __name__ == "__main__":
@@ -72,8 +80,20 @@ if __name__ == "__main__":
 
         platform = sys.platform
         exists = path_exists_with_different_case(fn_base, stub_lower)
+        exists_dont_ignore = path_exists_with_different_case(fn_base, stub_lower)
+        exists_ignore = path_exists_with_different_case_all_filesystems(
+            fn_base, stub_lower
+        )
         print(f"platform: {platform}")
+        print(f"is case sensitive fs: {is_fs_case_sensitive(fn_base)}")
+        print(
+            f"file exists with different case (don't ignore fs case-sensitivity): {exists_dont_ignore}"
+        )
+        print(
+            f"file exists with different case (ignore fs case-sensitivity): {exists_ignore}"
+        )
+        assert exists_ignore
         if not is_fs_case_sensitive(fn_base):
-            assert exists
+            assert exists_dont_ignore
         else:
-            assert not exists
+            assert not exists_dont_ignore
