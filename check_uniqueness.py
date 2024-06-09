@@ -53,8 +53,8 @@ def assert_unique_2(parent_path: Path, name: str, name_lower: str) -> bool:
 def path_exists_with_different_case(parent_path: Path, name: str) -> bool:
     full_path = parent_path / name
     if full_path.exists():
-        items = [parent_path / item for item in os.listdir(str(parent_path))]
-        return full_path not in items
+        items = [str(parent_path / item) for item in os.listdir(str(parent_path))]
+        return str(full_path) not in items
     return False
 
 
