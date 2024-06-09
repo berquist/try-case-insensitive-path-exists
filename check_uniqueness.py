@@ -46,7 +46,9 @@ def assert_unique_2(parent_path: Path, name: str, name_lower: str) -> bool:
 
 
 def path_exists_with_different_case(parent_path: Path, name: str) -> bool:
-    return True
+    items = list(os.listdir(str(parent_path)))
+    items_lower = [item.lower() for item in items]
+    return name not in items and name.lower() in items_lower
 
 
 if __name__ == "__main__":
@@ -57,11 +59,11 @@ if __name__ == "__main__":
         fn_upper = fn_base / stub_upper
         fn_lower = fn_base / stub_lower
         fn_upper.touch(mode=0o644, exist_ok=True)
-        # try:
-        #     fn_lower.touch(mode=0o644, exist_ok=True)
-        # except:
-        #     pass
 
         platform = sys.platform
+        exists = path_exists_with_different_case(fn_base, stub_lower)
         print(f"platform: {platform}")
-        print(path_exists_with_different_case(fn_base, stub_lower))
+        if platform in ("win32", "darwin"):
+            assert exists
+        else:
+            assert not exists
